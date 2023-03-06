@@ -1,5 +1,10 @@
 # Codename-FUD-C2
 Bypass SIEM C2 detect
+
+
+
+
+
 Using HTTP Protocol
 RAT and Listener have the same key in order to encryp & decryp
 
